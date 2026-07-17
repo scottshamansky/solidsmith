@@ -5,7 +5,7 @@ over, 3MF export that keeps its colors, a printability report, and quick
 multi-view renders to iterate against.
 """
 
-from solidsmith import sdf
+from solidsmith import sdf, workflow
 from solidsmith.export import write_3mf, write_stl
 from solidsmith.ops import (
     clean,
@@ -37,6 +37,7 @@ __all__ = [
     "rounded_prism",
     "sdf",
     "union",
+    "workflow",
     "write_3mf",
     "write_stl",
     "__version__",

@@ -102,11 +102,31 @@ solid = sdf.intersect(body, sdf.plane())          # flat print base at z=0
 mesh = sdf.mesh(solid, bounds=((-30, -30, 0), (30, 50, 50)), pitch=0.5)
 ```
 
+## The iteration loop
+
+`workflow.main` wraps the loop every scripted model settles into: `preview`
+builds coarse and renders a PNG in seconds; `final` cuts the print-quality
+files; and every preview is archived to `previews/` — script included — so
+each iteration's look and the code that produced it stay side by side.
+
+```python
+from solidsmith import workflow
+
+def build(fast: bool):
+    ...
+    return parts        # a mesh, a Part, or a list of them
+
+if __name__ == "__main__":
+    workflow.main(build, name="widget")
+```
+
+`python widget.py preview`, tweak, repeat — `python widget.py final` once
+the design is locked.
+
 ## Roadmap
 
-- Iteration workflow: preview/final build modes with a versioned archive of
-  every design revision
 - More examples, printer profiles, and printability checks
+- PyPI release
 
 ## License
 
