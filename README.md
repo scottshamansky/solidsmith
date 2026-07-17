@@ -64,6 +64,9 @@ write_3mf([Part(body, (30, 120, 220), "body"),
 | Model | Run it |
 | --- | --- |
 | Honeycomb storage bin — vented walls, supports-free label tab, every dimension a parameter | `python examples/honeycomb_bin.py` |
+| Pebble planter — SDF-sculpted organic form, hollow with a drainage hole, split into two filament colors | `python examples/pebble_planter.py` |
+
+![two-color SDF pebble planter](docs/images/pebble_planter.png)
 
 Each example writes STL + colored 3MF + a rendered preview into `out/` and
 prints its printability report. Add `--fast` while you iterate.
@@ -79,10 +82,24 @@ pip install -e .
 Requires Python 3.9+. Dimensions are millimeters throughout; the default bed
 is a 256 mm cube (Bambu P1/P2/X1 class) and every check takes your own `bed=`.
 
+## Sculpting (SDF)
+
+Alongside the hard-edged boolean toolkit, `solidsmith.sdf` models organic
+shapes as blended signed distance fields — functional primitives, smooth
+unions that read as clay fillets, `offset`/`shell` for hollowing, and
+marching-cubes meshing with Taubin smoothing:
+
+```python
+from solidsmith import sdf
+
+body = sdf.smooth_union(12, sdf.sphere((0, 0, 30), 25),
+                            sdf.ellipsoid((0, 18, 22), (20, 26, 16)))
+solid = sdf.intersect(body, sdf.plane())          # flat print base at z=0
+mesh = sdf.mesh(solid, bounds=((-30, -30, 0), (30, 50, 50)), pitch=0.5)
+```
+
 ## Roadmap
 
-- SDF sculpting module: smooth-blended organic shapes (marching cubes +
-  Taubin smoothing) alongside the hard-edged boolean toolkit
 - Iteration workflow: preview/final build modes with a versioned archive of
   every design revision
 - More examples, printer profiles, and printability checks

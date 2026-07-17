@@ -5,6 +5,7 @@ over, 3MF export that keeps its colors, a printability report, and quick
 multi-view renders to iterate against.
 """
 
+from solidsmith import sdf
 from solidsmith.export import write_3mf, write_stl
 from solidsmith.ops import (
     clean,
@@ -34,6 +35,7 @@ __all__ = [
     "intersection",
     "render_views",
     "rounded_prism",
+    "sdf",
     "union",
     "write_3mf",
     "write_stl",

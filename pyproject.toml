@@ -18,6 +18,7 @@ dependencies = [
     "matplotlib>=3.7",
     "networkx>=2.8",
     "lxml>=4.9",
+    "scikit-image>=0.22",
 ]
 keywords = [
     "3d-printing",
