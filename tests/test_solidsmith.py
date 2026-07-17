@@ -1,5 +1,6 @@
 """Behavior tests: geometry stays watertight, exports keep their promises."""
 
+import sys
 import xml.etree.ElementTree as ET
 import zipfile
 
@@ -8,6 +9,7 @@ import pytest
 import trimesh
 
 from solidsmith import (
+    workflow,
     Part,
     check,
     difference,
@@ -140,6 +142,34 @@ def test_sdf_smooth_union_adds_neck_material():
 def test_sdf_mesh_rejects_empty_field():
     with pytest.raises(ValueError, match="never crosses zero"):
         sdf.mesh(sdf.sphere((0, 0, 0), 1), ((5, 5, 5), (8, 8, 8)), pitch=0.5)
+
+
+def test_workflow_archive_numbers_iterations(tmp_path):
+    previews = tmp_path / "previews"
+    stl = tmp_path / "a.stl"
+    stl.write_text("solid")
+    script = tmp_path / "model.py"
+    script.write_text("# build script")
+
+    v1 = workflow.archive([stl], script, previews, "widget")
+    v2 = workflow.archive([stl], script, previews, "widget")
+    assert (v1, v2) == (1, 2)
+    assert (previews / "widget_v1.stl").exists()
+    assert (previews / "widget_v2.py").exists()
+    assert workflow.next_version(previews, "other") == 1
+
+
+def test_workflow_main_preview_writes_and_archives(tmp_path, monkeypatch):
+    box = trimesh.creation.box((8, 8, 8))
+    box.apply_translation((0, 0, 4))
+    monkeypatch.setattr(sys, "argv", ["fake_model.py", "preview"])
+    monkeypatch.chdir(tmp_path)
+
+    workflow.main(lambda fast: box, name="cube")
+
+    assert (tmp_path / "out/cube_preview.stl").exists()
+    assert (tmp_path / "out/cube_preview.3mf").exists()
+    assert (tmp_path / "previews/cube_v1.png").exists()
 
 
 def test_render_views_writes_a_real_png(tmp_path):

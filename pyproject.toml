@@ -44,3 +44,6 @@ Issues = "https://github.com/scottshamansky/solidsmith/issues"
 
 [tool.setuptools.packages.find]
 where = ["src"]
+
+[tool.setuptools.package-data]
+solidsmith = ["py.typed"]
