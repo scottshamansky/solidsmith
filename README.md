@@ -69,6 +69,7 @@ write_3mf([Part(body, (30, 120, 220), "body"),
 | --- | --- |
 | Honeycomb storage bin — vented walls, supports-free label tab, every dimension a parameter | `python examples/honeycomb_bin.py` |
 | Pebble planter — SDF-sculpted organic form, hollow with a drainage hole, split into two filament colors | `python examples/pebble_planter.py` |
+| Hex bit organizer — 16 slide-fit sockets for 1/4" bits, built on `workflow.main` with preview/final modes | `python examples/bit_organizer.py preview` |
 
 ![two-color SDF pebble planter](docs/images/pebble_planter.png)
 

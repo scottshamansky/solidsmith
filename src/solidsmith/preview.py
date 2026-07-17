@@ -40,10 +40,17 @@ def render_views(parts, path, views=None, dpi: int = 140, background: str = "whi
     parts = as_parts(parts)
     views = dict(views) if views else dict(DEFAULT_VIEWS)
 
-    # one combined triangle soup so depth sorting works across parts
+    spans_all = np.concatenate([p.mesh.bounds for p in parts], axis=0)
+    max_edge = 0.04 * float(np.ptp(spans_all, axis=0).max())
+
+    # one combined triangle soup so depth sorting works across parts;
+    # long edges get subdivided first because the painter's algorithm
+    # mis-sorts large triangles and streaks flat faces
     triangles, colors = [], []
     for part in parts:
         mesh = part.mesh
+        if max_edge > 0 and len(mesh.faces):
+            mesh = mesh.subdivide_to_size(max_edge, max_iter=12)
         normals = np.nan_to_num(np.asarray(mesh.face_normals, dtype=np.float64))
         # multiply-and-sum rather than matmul: Accelerate BLAS on macOS emits
         # spurious floating-point warnings for tiny matmuls
