@@ -1,0 +1,45 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "solidsmith"
+version = "0.1.0"
+description = "Forge watertight, print-ready 3D parts from Python: robust booleans, colored 3MF export, and multi-view previews."
+readme = "README.md"
+license = { text = "MIT" }
+authors = [{ name = "Scott Shamansky" }]
+requires-python = ">=3.9"
+dependencies = [
+    "numpy>=1.24",
+    "scipy>=1.10",
+    "trimesh>=4.10",
+    "manifold3d>=2.5",
+    "matplotlib>=3.7",
+    "networkx>=2.8",
+    "lxml>=4.9",
+]
+keywords = [
+    "3d-printing",
+    "parametric",
+    "stl",
+    "3mf",
+    "trimesh",
+    "cad",
+    "maker",
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Manufacturing",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Topic :: Multimedia :: Graphics :: 3D Modeling",
+    "Topic :: Scientific/Engineering",
+]
+
+[project.urls]
+Homepage = "https://github.com/scottshamansky/solidsmith"
+Issues = "https://github.com/scottshamansky/solidsmith/issues"
+
+[tool.setuptools.packages.find]
+where = ["src"]

@@ -1,0 +1,17 @@
+# environments
+.venv/
+venv/
+
+# python
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+build/
+.pytest_cache/
+
+# generated model output (rendered docs images ARE committed, under docs/)
+out/
+
+# macOS
+.DS_Store

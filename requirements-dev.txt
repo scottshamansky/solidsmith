@@ -1,0 +1,9 @@
+# Known-good pinned environment for local development (Python 3.9+).
+# The library itself declares looser ranges in pyproject.toml.
+lxml==6.1.1
+manifold3d==3.5.2
+matplotlib==3.9.4
+networkx==3.2.1
+numpy==2.0.2
+scipy==1.13.1
+trimesh==4.12.2
