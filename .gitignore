@@ -16,3 +16,6 @@ out/
 # macOS
 .DS_Store
 previews/
+
+# maintainer-local scratch notes
+NOTES.md
