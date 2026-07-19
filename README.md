@@ -3,6 +3,7 @@
 [![CI](https://github.com/scottshamansky/solidsmith/actions/workflows/ci.yml/badge.svg)](https://github.com/scottshamansky/solidsmith/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 ![Python 3.9+](https://img.shields.io/badge/python-3.9%2B-blue)
+[![PyPI](https://img.shields.io/pypi/v/solidsmith)](https://pypi.org/project/solidsmith/)
 
 **Forge watertight, print-ready 3D parts from Python.**
 
@@ -80,13 +81,13 @@ prints its printability report. Add `--fast` while you iterate.
 ## Install
 
 ```bash
-git clone https://github.com/scottshamansky/solidsmith
-cd solidsmith
-pip install -e .
+pip install solidsmith
 ```
 
-Requires Python 3.9+. Dimensions are millimeters throughout; the default bed
-is a 256 mm cube (Bambu P1/P2/X1 class) and every check takes your own `bed=`.
+Or from a checkout, `pip install -e .`. Requires Python 3.9+. Dimensions are
+millimeters throughout; checks default to a 256 mm cube bed (Bambu P1/P2/X1
+class) and take any built-in profile (`printer="bambu_a1_mini"`), your own
+`Printer`, or a bare `bed=`.
 
 ## Sculpting (SDF)
 
@@ -128,7 +129,6 @@ the design is locked.
 ## Roadmap
 
 - More examples and an overhang/support-need check
-- PyPI release
 
 ## License
 
