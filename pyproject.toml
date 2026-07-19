@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "solidsmith"
-version = "0.1.0"
+version = "0.2.0"
 description = "Forge watertight, print-ready 3D parts from Python: robust booleans, colored 3MF export, and multi-view previews."
 readme = "README.md"
 license = { text = "MIT" }

@@ -21,7 +21,7 @@ from solidsmith.printers import Printer
 from solidsmith.preview import DEFAULT_VIEWS, render_views
 from solidsmith.report import DEFAULT_BED, PrintReport, check
 
-__version__ = "0.1.0"
+__version__ = "0.2.0"
 
 __all__ = [
     "DEFAULT_BED",
