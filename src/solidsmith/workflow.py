@@ -55,11 +55,12 @@ def archive(files, script, previews: Path, name: str) -> int:
     return version
 
 
-def main(build, name: str, out="out", previews="previews", views=None) -> None:
+def main(build, name: str, out="out", previews="previews", views=None, printer=None) -> None:
     """Run a build function as a preview/final CLI (see module docstring).
 
     ``build(fast: bool)`` should return a mesh, a Part, or a list of Parts —
-    coarse when fast is True, print-quality when False.
+    coarse when fast is True, print-quality when False. ``printer`` is passed
+    through to `check` — a `printers.Printer` or slug like ``"bambu_p2s"``.
     """
     parser = argparse.ArgumentParser(description=f"Build {name}")
     parser.add_argument(
@@ -69,7 +70,7 @@ def main(build, name: str, out="out", previews="previews", views=None) -> None:
     args = parser.parse_args()
 
     parts = as_parts(build(args.mode == "preview"))
-    print(check(parts), "\n")
+    print(check(parts, printer=printer), "\n")
 
     out_dir = Path(out)
     out_dir.mkdir(parents=True, exist_ok=True)

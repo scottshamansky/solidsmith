@@ -211,7 +211,7 @@ def test_workflow_main_preview_writes_and_archives(tmp_path, monkeypatch):
     monkeypatch.setattr(sys, "argv", ["fake_model.py", "preview"])
     monkeypatch.chdir(tmp_path)
 
-    workflow.main(lambda fast: box, name="cube")
+    workflow.main(lambda fast: box, name="cube", printer="bambu_p2s")
 
     assert (tmp_path / "out/cube_preview.stl").exists()
     assert (tmp_path / "out/cube_preview.3mf").exists()
