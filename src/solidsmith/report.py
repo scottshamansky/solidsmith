@@ -8,9 +8,12 @@ from typing import List, Tuple
 import numpy as np
 
 from solidsmith.part import as_parts
+from solidsmith.printers import DEFAULT_PRINTER, Printer
+from solidsmith.printers import printer as _lookup_printer
 
-#: Bambu P1/P2/X1-class build volume, mm. Pass your own bed to `check`.
-DEFAULT_BED = (256.0, 256.0, 256.0)
+#: Build volume of `printers.DEFAULT_PRINTER`, mm. Kept for back-compat;
+#: prefer `check(parts, printer=...)` over passing a bare bed.
+DEFAULT_BED = DEFAULT_PRINTER.bed
 
 _PLATE_TOLERANCE = 0.5  # mm; how far off z=0 still counts as "on the plate"
 
@@ -26,6 +29,7 @@ class PrintReport:
     triangles: int
     fits_bed: bool
     bed: Tuple[float, float, float]
+    printer: str
     on_plate: bool
     warnings: List[str] = field(default_factory=list)
 
@@ -39,7 +43,7 @@ class PrintReport:
         lines = [
             f"{mark(self.watertight)} watertight ({body_note})",
             f"{mark(self.fits_bed)} {x:.1f} × {y:.1f} × {z:.1f} mm "
-            f"on a {bx:.0f} × {by:.0f} × {bz:.0f} bed",
+            f"on a {bx:.0f} × {by:.0f} × {bz:.0f} bed ({self.printer})",
             f"{mark(self.on_plate)} first layer on the plate (z=0)",
             f"  {self.volume_cm3:.1f} cm³ · {self.triangles:,} triangles",
         ]
@@ -50,13 +54,26 @@ class PrintReport:
         return self.summary()
 
 
-def check(parts, bed=DEFAULT_BED) -> PrintReport:
+def check(parts, bed=None, printer=None) -> PrintReport:
     """Inspect a mesh (or Parts) and report printability basics.
+
+    ``printer`` is a `printers.Printer` or a built-in slug like
+    ``"bambu_a1_mini"``; it defaults to `printers.DEFAULT_PRINTER`. ``bed``
+    remains as a shorthand for "custom machine, just this build volume" —
+    pass one or the other, not both.
 
     Watertightness is judged per body — touching multi-color bodies are each
     expected to be a closed solid on their own, even though their union is
     what gets printed.
     """
+    if printer is not None and bed is not None:
+        raise ValueError("pass bed= or printer=, not both")
+    if isinstance(printer, str):
+        printer = _lookup_printer(printer)
+    if printer is None:
+        printer = DEFAULT_PRINTER if bed is None else Printer("custom bed", tuple(bed))
+    bed = printer.bed
+
     parts = as_parts(parts)
     meshes = [p.mesh for p in parts]
 
@@ -93,6 +110,7 @@ def check(parts, bed=DEFAULT_BED) -> PrintReport:
         triangles=triangles,
         fits_bed=fits,
         bed=tuple(float(b) for b in bed),
+        printer=printer.name,
         on_plate=on_plate,
         warnings=warnings,
     )

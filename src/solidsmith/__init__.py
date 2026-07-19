@@ -5,7 +5,7 @@ over, 3MF export that keeps its colors, a printability report, and quick
 multi-view renders to iterate against.
 """
 
-from solidsmith import sdf, workflow
+from solidsmith import printers, sdf, workflow
 from solidsmith.export import write_3mf, write_stl
 from solidsmith.ops import (
     clean,
@@ -17,6 +17,7 @@ from solidsmith.ops import (
     union,
 )
 from solidsmith.part import Part
+from solidsmith.printers import Printer
 from solidsmith.preview import DEFAULT_VIEWS, render_views
 from solidsmith.report import DEFAULT_BED, PrintReport, check
 
@@ -27,6 +28,8 @@ __all__ = [
     "DEFAULT_VIEWS",
     "Part",
     "PrintReport",
+    "Printer",
+    "printers",
     "check",
     "clean",
     "concat",
