@@ -19,6 +19,7 @@ dependencies = [
     "networkx>=2.8",
     "lxml>=4.9",
     "scikit-image>=0.22",
+    "rtree>=1.0",
 ]
 keywords = [
     "3d-printing",

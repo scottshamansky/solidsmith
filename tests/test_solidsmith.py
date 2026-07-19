@@ -11,6 +11,7 @@ import trimesh
 from solidsmith import (
     workflow,
     Part,
+    Printer,
     check,
     printers,
     difference,
@@ -134,6 +135,32 @@ def test_check_judges_against_named_printer():
 
     small = check(tall, bed=(50, 50, 50))
     assert not small.fits_bed and small.printer == "custom bed"
+
+
+def test_check_flags_sub_nozzle_walls():
+    def open_box(wall):
+        outer = trimesh.creation.box((20, 20, 10))
+        outer.apply_translation((0, 0, 5))
+        cavity = trimesh.creation.box((20 - 2 * wall, 20 - 2 * wall, 10))
+        cavity.apply_translation((0, 0, 5.5))
+        return difference(outer, cavity)
+
+    thin = check(open_box(wall=0.3))
+    assert any("too thin" in w for w in thin.warnings)
+    assert not any("too thin" in w for w in check(open_box(wall=2.0)).warnings)
+    # a bigger nozzle makes the verdict stricter, not the geometry
+    coarse = check(open_box(wall=0.6), printer=Printer("wide", (256,) * 3, nozzle=0.8))
+    assert any("0.80 mm nozzle" in w for w in coarse.warnings)
+
+
+def test_check_flags_boolean_debris():
+    main = trimesh.creation.box((10, 10, 10))
+    main.apply_translation((0, 0, 5))
+    speck = trimesh.creation.box((0.5, 0.5, 0.5))
+    speck.apply_translation((20, 0, 0.25))
+    report = check(trimesh.util.concatenate([main, speck]))
+    assert any("boolean debris" in w for w in report.warnings)
+    assert not any("debris" in w for w in check(main).warnings)
 
 
 def test_sdf_sphere_meshes_to_expected_volume():
