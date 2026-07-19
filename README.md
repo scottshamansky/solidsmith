@@ -31,7 +31,7 @@ Parametric code beats mouse-driven CAD when you make things repeatedly:
 | --- | --- |
 | Booleans fail on real-world meshes | `union` / `difference` / `intersection` run the robust manifold engine with mesh hygiene (`clean`) before and after |
 | 3MF export silently drops color | `write_3mf` injects real `<basematerials>` and tags each body, so multi-color models open in the slicer with filaments already assigned |
-| "Will it print?" found out the hard way | `check` reports watertightness per body, bed fit, and whether the model actually sits on the plate |
+| "Will it print?" found out the hard way | `check` reports watertightness per body, bed fit, and whether the model actually sits on the plate — against a named printer profile (`printer="bambu_a1_mini"`) or your own `Printer` |
 | Seeing your part means opening a slicer | `render_views` renders shaded PNGs from named camera angles in about a second, no GUI or GPU |
 
 ## Quickstart
@@ -51,7 +51,7 @@ render_views(tray, "tray.png")         # shaded views, one PNG
 
 ```
 ✔ watertight (1 body)
-✔ 80.0 × 50.0 × 30.0 mm on a 256 × 256 × 256 bed
+✔ 80.0 × 50.0 × 30.0 mm on a 256 × 256 × 256 bed (Bambu X1C / P1S)
 ✔ first layer on the plate (z=0)
   31.0 cm³ · 564 triangles
 ```
@@ -126,7 +126,7 @@ the design is locked.
 
 ## Roadmap
 
-- More examples, printer profiles, and printability checks
+- More examples and printability checks (thin walls, floating bodies)
 - PyPI release
 
 ## License

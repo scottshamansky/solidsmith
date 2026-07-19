@@ -12,6 +12,7 @@ from solidsmith import (
     workflow,
     Part,
     check,
+    printers,
     difference,
     intersection,
     render_views,
@@ -115,6 +116,24 @@ def test_check_happy_path_summary():
     assert report.watertight and report.fits_bed and report.on_plate
     assert report.warnings == []
     assert "✔" in report.summary() and "⚠" not in report.summary()
+    assert printers.DEFAULT_PRINTER.name in report.summary()
+
+
+def test_check_judges_against_named_printer():
+    tall = trimesh.creation.box((10, 10, 200))
+    tall.apply_translation((0, 0, 100))
+    assert check(tall).fits_bed
+    report = check(tall, printer="bambu_a1_mini")
+    assert not report.fits_bed
+    assert report.printer == "Bambu A1 mini"
+
+    with pytest.raises(KeyError, match="bambu_a1_mini"):
+        check(tall, printer="not_a_printer")
+    with pytest.raises(ValueError, match="not both"):
+        check(tall, bed=(200, 200, 200), printer=printers.PRUSA_MK4)
+
+    small = check(tall, bed=(50, 50, 50))
+    assert not small.fits_bed and small.printer == "custom bed"
 
 
 def test_sdf_sphere_meshes_to_expected_volume():
