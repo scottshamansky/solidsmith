@@ -6,6 +6,7 @@ from dataclasses import dataclass, field
 from typing import List, Tuple
 
 import numpy as np
+import trimesh.proximity
 
 from solidsmith.part import as_parts
 from solidsmith.printers import DEFAULT_PRINTER, Printer
@@ -16,6 +17,22 @@ from solidsmith.printers import printer as _lookup_printer
 DEFAULT_BED = DEFAULT_PRINTER.bed
 
 _PLATE_TOLERANCE = 0.5  # mm; how far off z=0 still counts as "on the plate"
+_DEBRIS_VOLUME = 1.0  # mm³; a disconnected body smaller than this is boolean debris
+_WALL_SAMPLES = 512  # thickness rays per part; enough to catch any thin panel
+
+
+def _min_wall(mesh) -> float:
+    """Thinnest spot found by shooting rays inward from sampled faces, mm."""
+    faces = len(mesh.faces)
+    if faces <= _WALL_SAMPLES:
+        idx = np.arange(faces)
+    else:
+        idx = np.random.default_rng(0).choice(faces, _WALL_SAMPLES, replace=False)
+    thickness = trimesh.proximity.thickness(
+        mesh, mesh.triangles_center[idx], normals=mesh.face_normals[idx], method="ray"
+    )
+    thickness = thickness[np.isfinite(thickness)]
+    return float(thickness.min()) if len(thickness) else float("inf")
 
 
 @dataclass
@@ -101,6 +118,24 @@ def check(parts, bed=None, printer=None) -> PrintReport:
         warnings.append(f"model floats {z_low:.1f} mm above the plate")
     if z_low < -_PLATE_TOLERANCE:
         warnings.append(f"model extends {-z_low:.1f} mm below the plate")
+
+    for p in parts:
+        if not p.mesh.is_watertight:
+            continue  # geometry is unreliable; the watertight warning covers it
+        thin = _min_wall(p.mesh)
+        if thin < printer.nozzle:
+            warnings.append(
+                f"'{p.name}' has walls down to {thin:.2f} mm — too thin for "
+                f"the {printer.nozzle:.2f} mm nozzle"
+            )
+        bodies = p.mesh.split(only_watertight=False)
+        specks = sum(1 for b in bodies if abs(float(b.volume)) < _DEBRIS_VOLUME)
+        if len(bodies) > 1 and specks:
+            plural = "bodies" if specks != 1 else "body"
+            warnings.append(
+                f"'{p.name}' has {specks} stray {plural} under "
+                f"{_DEBRIS_VOLUME:.0f} mm³ — boolean debris? try clean()"
+            )
 
     return PrintReport(
         watertight=watertight,
